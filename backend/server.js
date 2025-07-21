@@ -1,14 +1,18 @@
-const express = require("express");
-const helmet = require("helmet");
+import express from "express";
+import helmet from "helmet";
+import connectDb from "./config/dbConnection.js";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 const app = express();
 
+connectDb();
 app.use(express.json());
-app.use(express.urlencoded());
 app.use(helmet());
 
 app.get("/", (req, res) => {
     res.json("Valid response");
 })
 
-app.listen(3000);
+app.listen(process.env.PORT || 5000);
