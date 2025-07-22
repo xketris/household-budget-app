@@ -4,6 +4,8 @@ import dotenv from "dotenv";
 
 import connectDb from "./config/dbConnection.js";
 import categoryRoutes from "./routes/categoryRoutes.js";
+import userRoutes from "./routes/userRoutes.js";
+import errorHandler from "./middleware/errorHandler.js";
 
 dotenv.config();
 
@@ -14,6 +16,7 @@ app.use(express.json());
 app.use(helmet());
 
 app.use("/api/categories", categoryRoutes);
+app.use("/api/auth", userRoutes);
 
 app.use(errorHandler)
 
