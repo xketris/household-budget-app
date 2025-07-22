@@ -1,7 +1,9 @@
 import express from "express";
 import helmet from "helmet";
-import connectDb from "./config/dbConnection.js";
 import dotenv from "dotenv";
+
+import connectDb from "./config/dbConnection.js";
+import categoryRoutes from "./routes/categoryRoutes.js";
 
 dotenv.config();
 
@@ -11,8 +13,6 @@ connectDb();
 app.use(express.json());
 app.use(helmet());
 
-app.get("/", (req, res) => {
-    res.json("Valid response");
-})
+app.use("/api/categories", categoryRoutes);
 
 app.listen(process.env.PORT || 5000);
