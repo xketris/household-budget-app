@@ -1,9 +1,10 @@
 import asyncHandler from "express-async-handler";
 import Expense from "../models/expenseModel.js"
+import Group from "../models/groupModel.js"
 
 const addExpense = asyncHandler(async (req, res) => {
     const { amount, description, category, group_id } = req.body;
-    if(!amount) {
+    if(!amount || !category) {
         res.status(400);
         throw new Error("Amount is required");
     }
@@ -32,6 +33,9 @@ const addExpense = asyncHandler(async (req, res) => {
 });
 
 const getExpenses = asyncHandler(async (req, res) => {
+    if(req.body.group_id && await Group.findById(group_id).users.contains(req.user._id)) {
+        res.status(200).json(await Expense.find({ group_id }));
+    }
     const expenses = await Expense.find({ created_by: req.user.id });
     res.status(200).json(expenses);
 });
