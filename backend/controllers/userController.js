@@ -2,6 +2,7 @@ import asyncHandler from "express-async-handler";
 import User from "../models/userModel.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import { uuid } from "uuidv4"
 
 // @desc Register a user
 // @route POST /api/users/register
@@ -50,18 +51,31 @@ const loginUser = asyncHandler(async (req, res) => {
     }
     const user = await User.findOne({ email });
     if(user && (await bcrypt.compare(password, user.password))) {
+        const sessionId = uuid();
+
         const accessToken = jwt.sign({
+                session_id: sessionId,
                 user: {
-                    username: user.username,
                     email: user.email,
                     id: user._id
                 }
             }, 
             process.env.ACCESS_TOKEN_SECRET,
-            { expiresIn: "60m" }
+            { expiresIn: "10000" }
         );
+        const refreshToken = jwt.sign({
+                session_id: sessionId,
+            }, 
+            process.env.REFRESH_TOKEN_SECRET,
+            { expiresIn: "180d" }
+        );
+
+        res.cookie("accessToken", accessToken, {overwrite: true});
+        res.cookie("refreshToken", refreshToken, {overwrite: true});
+        
         res.status(200).json({
-            accessToken
+            accessToken,
+            refreshToken
         })
     } else {
         res.status(401);
