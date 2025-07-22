@@ -2,6 +2,8 @@ import Router from "express";
 
 const router = Router();
 
+router.use(validateToken);
+
 router.route("/")
     .get()
     .post()
