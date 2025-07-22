@@ -1,4 +1,5 @@
 import Router from "express";
+import { addGroup, getGroup } from "../controllers/groupController";
 
 const router = Router();
 
@@ -6,10 +7,10 @@ router.use(validateToken);
 
 router.route("/")
     .get()
-    .post()
+    .post(addGroup)
 
 router.route("/:id")
-    .get()
+    .get(getGroup)
     .put()
     .delete()
 
