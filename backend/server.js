@@ -15,4 +15,6 @@ app.use(helmet());
 
 app.use("/api/categories", categoryRoutes);
 
+app.use(errorHandler)
+
 app.listen(process.env.PORT || 5000);
