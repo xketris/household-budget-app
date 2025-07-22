@@ -17,10 +17,11 @@ const userSchema = mongoose.Schema({
         type: String,
         required: [ true, "Password is required" ]
     },
-    groups: {
-        type: Array,
-        required: false
-    }
+    groups: [{
+        type: mongoose.Schema.Types.ObjectId,
+        required: false,
+        ref: "Group"
+    }]
 }, { timestamps: true })
 
 export default mongoose.model("User", userSchema);
