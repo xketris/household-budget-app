@@ -15,9 +15,9 @@ const expenseModel = mongoose.Schema({
         ref: "User"
     },
     category: {
-        type: mongoose.Schema.Types.ObjectId,
-        required: true,
-        ref: "Category"
+        type: String,
+        enum: ["Personal", "Groceries", "Transportation", "Insurance", "Entertainment", "Utilities", "Housing", "Healthcare", "Uncategorized"],
+        default: "Uncategorized"
     },
     group_id: {
         type: mongoose.Schema.Types.ObjectId,

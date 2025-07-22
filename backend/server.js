@@ -3,7 +3,6 @@ import helmet from "helmet";
 import dotenv from "dotenv";
 
 import connectDb from "./config/dbConnection.js";
-import categoryRoutes from "./routes/categoryRoutes.js";
 import groupRoutes from "./routes/groupRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 import errorHandler from "./middleware/errorHandler.js";
@@ -16,7 +15,6 @@ connectDb();
 app.use(express.json());
 app.use(helmet());
 
-app.use("/api/categories", categoryRoutes);
 app.use("/api/groups", groupRoutes);
 app.use("/api/auth", userRoutes);
 
