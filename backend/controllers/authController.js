@@ -62,15 +62,14 @@ const loginUser = asyncHandler(async (req, res) => {
                 }
             }, 
             process.env.ACCESS_TOKEN_SECRET,
-            { expiresIn: "20000" }
+            { expiresIn: process.env.ACCESS_TOKEN_EXPIRATION_TIME }
         );
         const refreshTokenObj = {
             sessionId: sessionId,
             valid: true
         }
 
-        
-        const refreshToken = jwt.sign(refreshTokenObj, process.env.REFRESH_TOKEN_SECRET, { expiresIn: "180d" });
+        const refreshToken = jwt.sign(refreshTokenObj, process.env.REFRESH_TOKEN_SECRET, { expiresIn: REFRESH_TOKEN_EXPIRATION_TIME });
 
         await RefreshToken.create(refreshTokenObj);
         
@@ -107,7 +106,7 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
         const newAccessToken = jwt.sign({
             user: decoded.user,
             sessionId: decoded.sessionId,
-        }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: "20000" });
+        }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: ACCESS_TOKEN_EXPIRATION_TIME });
 
         res.json({ accessToken: newAccessToken });
     } catch(e) {
