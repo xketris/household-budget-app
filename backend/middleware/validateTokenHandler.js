@@ -22,7 +22,12 @@ const validateToken = asyncHandler( async (req, res, next) => {
 
                     if(decodedAccessToken.session_id === decodedRefreshToken.session_id && decodedRefreshToken.exp > dateNow) {
                         console.log("new access token generated!")
-                        res.cookie("accessToken", jwt.sign({ user: decodedAccessToken.user, session_id: decodedAccessToken.session_id }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: "10s" }), {overwrite: true});
+                        res.cookie("accessToken", jwt.sign({ user: decodedAccessToken.user, session_id: decodedAccessToken.session_id }, process.env.ACCESS_TOKEN_SECRET, { 
+                            expiresIn: "5m",
+                            httpOnly: true,
+                            secure: true,
+                            sameSite: "Strict",
+                        }), {overwrite: true});
                     } else {
                         console.log("invalid refresh token!")
                         res.clearCookie("accessToken");

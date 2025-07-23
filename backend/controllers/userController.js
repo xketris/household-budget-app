@@ -61,7 +61,7 @@ const loginUser = asyncHandler(async (req, res) => {
                 }
             }, 
             process.env.ACCESS_TOKEN_SECRET,
-            { expiresIn: "10000" }
+            { expiresIn: "5m" }
         );
         const refreshToken = jwt.sign({
                 session_id: sessionId,
@@ -70,8 +70,18 @@ const loginUser = asyncHandler(async (req, res) => {
             { expiresIn: "180d" }
         );
 
-        res.cookie("accessToken", accessToken, {overwrite: true});
-        res.cookie("refreshToken", refreshToken, {overwrite: true});
+        res.cookie("accessToken", accessToken, {
+            overwrite: true,
+            httpOnly: true,
+            secure: true,
+            sameSite: "Strict",
+        });
+        res.cookie("refreshToken", refreshToken, {
+            overwrite: true,
+            httpOnly: true,
+            secure: true,
+            sameSite: "Strict",
+        });
         
         res.status(200).json({
             accessToken,
