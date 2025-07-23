@@ -9,7 +9,7 @@ const expenseModel = mongoose.Schema({
         type: String,
         required: false
     },
-    created_by: {
+    createdBy: {
         type: mongoose.Schema.Types.ObjectId,
         required: true,
         ref: "User"
@@ -19,7 +19,7 @@ const expenseModel = mongoose.Schema({
         enum: ["Personal", "Groceries", "Transportation", "Insurance", "Entertainment", "Utilities", "Housing", "Healthcare", "Uncategorized"],
         default: "Uncategorized"
     },
-    group_id: {
+    groupId: {
         type: mongoose.Schema.Types.ObjectId,
         required: false,
         ref: "Group"

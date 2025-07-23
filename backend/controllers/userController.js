@@ -8,8 +8,8 @@ import { uuid } from "uuidv4"
 // @route POST /api/users/register
 // @access public
 const registerUser = asyncHandler(async (req, res) => {
-    const { first_name, last_name, email, password } = req.body;
-    if(!first_name || !email || !password) {
+    const { firstName, lastName, email, password } = req.body;
+    if(!firstName || !email || !password) {
         res.status(400);
         throw new Error("All fields are mandatory!");
     }
@@ -21,8 +21,8 @@ const registerUser = asyncHandler(async (req, res) => {
     
     const hashedPassword = await bcrypt.hash(password, 10);
     const user = await User.create({
-        first_name: first_name.charAt(0).toUpperCase() + first_name.slice(1),
-        last_name: last_name.charAt(0).toUpperCase() + last_name.slice(1),
+        firstName: firstName.charAt(0).toUpperCase() + firstName.slice(1),
+        lastName: lastName.charAt(0).toUpperCase() + lastName.slice(1),
         email: email.toLowerCase(),
         password: hashedPassword
     });

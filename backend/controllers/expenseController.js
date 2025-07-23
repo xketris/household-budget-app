@@ -3,7 +3,7 @@ import Expense from "../models/expenseModel.js"
 import Group from "../models/groupModel.js"
 
 const addExpense = asyncHandler(async (req, res) => {
-    const { amount, description, category, group_id } = req.body;
+    const { amount, description, category, groupId } = req.body;
     if(!amount || !category) {
         res.status(400);
         throw new Error("Amount is required");
@@ -12,9 +12,9 @@ const addExpense = asyncHandler(async (req, res) => {
     const expense = await Expense.create({
         amount, 
         description, 
-        created_by: req.user._id, 
+        createdBy: req.user._id, 
         category, 
-        group_id
+        groupId
     });
 
     if(expense) {
@@ -22,9 +22,9 @@ const addExpense = asyncHandler(async (req, res) => {
             _id: expense._id,
             amount: expense.amount, 
             description: expense.description, 
-            created_by: expense.created_by,
+            createdBy: expense.createdBy,
             category: expense.category,
-            group_id: expense.group_id
+            groupId: expense.groupId
         });
     } else {
         res.status(400);
@@ -33,10 +33,10 @@ const addExpense = asyncHandler(async (req, res) => {
 });
 
 const getExpenses = asyncHandler(async (req, res) => {
-    if(req.body.group_id && await Group.findById(group_id).users.contains(req.user._id)) {
-        res.status(200).json(await Expense.find({ group_id }));
+    if(req.body.groupId && await Group.findById(groupId).users.contains(req.user._id)) {
+        res.status(200).json(await Expense.find({ groupId }));
     }
-    const expenses = await Expense.find({ created_by: req.user.id });
+    const expenses = await Expense.find({ createdBy: req.user.id });
     res.status(200).json(expenses);
 });
 
@@ -74,7 +74,7 @@ const deleteExpense = asyncHandler(async (req, res) => {
         throw new Error("Expense not found");
     }
 
-    if(expense.created_by.toString() !== req.user.id) {
+    if(expense.createdBy.toString() !== req.user.id) {
         res.status(403);
         throw new Error("User doesn't have permission to delete others expenses");
     }

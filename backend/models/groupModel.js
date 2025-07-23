@@ -9,7 +9,7 @@ const groupSchema = mongoose.Schema({
         type: String,
         required: false
     },
-    created_by: {
+    createdBy: {
         type: mongoose.Schema.Types.ObjectId,
         required: true,
         ref: "User"

@@ -8,7 +8,7 @@ const addGroup = asyncHandler(async (req, res) => {
         throw new Error("All fields are required");
     }
     
-    const groupAvailable = await Group.findOne({ name, created_by: req.user.id });
+    const groupAvailable = await Group.findOne({ name, createdBy: req.user.id });
     if(groupAvailable) {
         res.status(400);
         throw new Error("Group with this name created by the same user already exists");
@@ -17,7 +17,7 @@ const addGroup = asyncHandler(async (req, res) => {
     const group = await Group.create({
         name,
         description,
-        created_by: req.user.id,
+        createdBy: req.user.id,
         users: [...users, req.user.id]
     })
     
@@ -26,7 +26,7 @@ const addGroup = asyncHandler(async (req, res) => {
             _id: group._id,
             name: group.name,
             description: group.description,
-            created_by: group.created_by,
+            createdBy: group.createdBy,
             users: group.users
         })
     } else {
