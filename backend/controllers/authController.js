@@ -101,7 +101,7 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
                 await session.save();
             }
 
-            res.status(403);
+            res.status(401);
             throw new Error("Refresh token is expired or invalid");
         }
         const newAccessToken = jwt.sign({
