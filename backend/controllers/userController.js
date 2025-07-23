@@ -1,5 +1,6 @@
 import asyncHandler from "express-async-handler";
 import User from "../models/userModel.js";
+import RefreshToken from "../models/refreshTokenModel.js"
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { uuid } from "uuidv4"
@@ -54,7 +55,7 @@ const loginUser = asyncHandler(async (req, res) => {
         const sessionId = uuid();
 
         const accessToken = jwt.sign({
-                session_id: sessionId,
+                sessionId: sessionId,
                 user: {
                     email: user.email,
                     id: user._id
@@ -63,25 +64,15 @@ const loginUser = asyncHandler(async (req, res) => {
             process.env.ACCESS_TOKEN_SECRET,
             { expiresIn: "5m" }
         );
-        const refreshToken = jwt.sign({
-                session_id: sessionId,
-            }, 
-            process.env.REFRESH_TOKEN_SECRET,
-            { expiresIn: "180d" }
-        );
+        const refreshTokenObj = {
+            sessionId: sessionId,
+            valid: true
+        }
 
-        res.cookie("accessToken", accessToken, {
-            overwrite: true,
-            httpOnly: true,
-            secure: true,
-            sameSite: "Strict",
-        });
-        res.cookie("refreshToken", refreshToken, {
-            overwrite: true,
-            httpOnly: true,
-            secure: true,
-            sameSite: "Strict",
-        });
+        
+        const refreshToken = jwt.sign(refreshTokenObj, process.env.REFRESH_TOKEN_SECRET, { expiresIn: "180d" });
+
+        await RefreshToken.create(refreshTokenObj);
         
         res.status(200).json({
             accessToken,
