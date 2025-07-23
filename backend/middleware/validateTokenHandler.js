@@ -4,31 +4,25 @@ import jwt from "jsonwebtoken";
 
 const validateToken = asyncHandler( async (req, res, next) => {
     const authHeader = req.headers.authorization;
-    const accessToken = authHeader && authHeader.split(' ')[1];
+    let accessToken = authHeader && authHeader.split(' ')[1];
     if(accessToken) {
-        jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET, {
-            ignoreExpiration: true
-        }, async (err, decodedAccessToken) => {
-            if(err) {
-                res.status(401);
-                throw new Error("User is not authorized");
-            }
+        try {
+            const decodedAccessToken = jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET, { ignoreExpiration: true });
 
-            const dateNow = Math.round(Date.now()/1000);
+            const dateNow = Date.now()/1000;
+            console.log(decodedAccessToken, dateNow)
             if(decodedAccessToken.exp < dateNow) {
-                jwt.verify(req.cookies.refreshToken, process.env.REFRESH_TOKEN_SECRET, async (err, decodedRefreshToken) => {
-                    const dbRefreshToken = await RefreshToken.findById(decodedRefreshToken.sessionId);
-                    if(err) {
-                        res.status(401);
-                        throw new Error("User is not authorized");
-                    }
+                try {
+                    const decodedRefreshToken = await jwt.verify(req.headers["x-refresh-token"], process.env.REFRESH_TOKEN_SECRET, { ignoreExpiration: true});
+                    const dbRefreshToken = await RefreshToken.findOne({ sessionId: decodedRefreshToken.sessionId });
 
                     if(decodedAccessToken.sessionId === decodedRefreshToken.sessionId && decodedRefreshToken.exp > dateNow && dbRefreshToken.valid) {
                         console.log("new access token generated!")
                         const newAccessToken = jwt.sign({ user: decodedAccessToken.user, sessionId: decodedAccessToken.sessionId }, process.env.ACCESS_TOKEN_SECRET, { 
-                            expiresIn: "5m",
+                            expiresIn: "20000",
                         });
-                        res.setHeader("x-access-token", newAccessToken);
+                        console.log(jwt.decode(newAccessToken, process.env.ACCESS_TOKEN_SECRET))
+                        accessToken = newAccessToken;
                     } else {
                         if(dbRefreshToken.valid) {
                             dbRefreshToken.valid = false;
@@ -38,13 +32,20 @@ const validateToken = asyncHandler( async (req, res, next) => {
                         res.status(401);
                         throw new Error("User is not authorized");
                     }
-                });
+                } catch (e) {
+                    res.status(401);
+                    throw new Error("Refresh token is invalid");
+                }
+                
             }
 
             res.setHeader("x-access-token", accessToken);
             req.user = decodedAccessToken.user;
             next();
-        })
+        } catch(e) {
+            res.status(401);
+            throw new Error("User is not authorized");
+        }
     } else {
         res.status(401);
         throw new Error("User is not authorized or accessToken is missing");
