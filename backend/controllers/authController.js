@@ -84,6 +84,38 @@ const loginUser = asyncHandler(async (req, res) => {
     }
 })
 
+const refreshAccessToken = asyncHandler(async (req, res) => {
+    const refreshToken = req.headers["x-access-token"];
+    if(!refreshToken) {
+        res.status(401);
+        throw new Error("Refresh token is missing");
+    }
+
+    try {
+        const decoded = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, { ignoreExpiration: true });
+        const session = await RefreshToken.findOne({ sessionId: decoded.sessionId });
+
+        if(!session || !session.valid || decoded.exp < Date.now()/1000) {
+            if(session && session.valid) {
+                session.valid = false;
+                await session.save();
+            }
+
+            res.status(403);
+            throw new Error("Refresh token is expired or invalid");
+        }
+        const newAccessToken = jwt.sign({
+            user: decoded.user,
+            sessionId: decoded.sessionId,
+        }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: "20000" });
+
+        res.json({ accessToken: newAccessToken });
+    } catch(e) {
+        res.status(401);
+        throw new Error("Refresh token verificaiton failed");
+    }
+})
+
 // @desc Current user info
 // @route POST /api/users/current
 // @access private
@@ -92,4 +124,4 @@ const currentUser = asyncHandler(async (req, res) => {
 })
 
 
-export { registerUser, loginUser, currentUser }
+export { registerUser, loginUser, currentUser, refreshAccessToken }

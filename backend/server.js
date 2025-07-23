@@ -5,7 +5,7 @@ import cookieParser from "cookie-parser";
 
 import connectDb from "./config/dbConnection.js";
 import groupRoutes from "./routes/groupRoutes.js";
-import userRoutes from "./routes/userRoutes.js";
+import userRoutes from "./routes/authRoutes.js";
 import errorHandler from "./middleware/errorHandler.js";
 
 dotenv.config();

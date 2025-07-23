@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const expenseModel = mongoose.Schema({
+const expenseSchema = mongoose.Schema({
     amount: {
         type: Number,
         required: true
@@ -26,4 +26,4 @@ const expenseModel = mongoose.Schema({
     }
 })
 
-export default mongoose.model("Expense", expenseModel);
+export default mongoose.model("Expense", expenseSchema);
