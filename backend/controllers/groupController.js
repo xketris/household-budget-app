@@ -18,7 +18,7 @@ const addGroup = asyncHandler(async (req, res) => {
         name,
         description,
         createdBy: req.user.id,
-        users: [...users, req.user.id]
+        users: [...(users || []), req.user.id]
     })
     
     if(group) {
@@ -51,10 +51,6 @@ const getGroup = asyncHandler(async (req, res) => {
 
 const getGroups = asyncHandler(async (req, res) => {
     const groups = await Group.find({ users: [req.user.id] });
-    if(!groups.length) {
-        res.status(400);
-        throw new Error("User is not a part of any group");
-    }
     res.status(200).json(groups);
 })
 
@@ -64,7 +60,8 @@ const deleteGroup = asyncHandler(async (req, res) => {
         res.status(400);
         throw new Error("Group doesn't exist");
     }
-    if(group.createdBy !== req.user.id){
+    
+    if(group.createdBy.toString() !== req.user.id){
         res.status(400);
         throw new Error("User is not a part of the requested group");
     }
@@ -78,7 +75,7 @@ const updateGroup = asyncHandler(async (req, res) => {
         res.status(400);
         throw new Error("Group doesn't exist");
     }
-    if(group.createdBy !== req.user.id){
+    if(group.createdBy.toString() !== req.user.id){
         res.status(400);
         throw new Error("User is not a part of the requested group");
     }
