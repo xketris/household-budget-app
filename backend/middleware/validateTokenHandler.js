@@ -7,14 +7,13 @@ const validateToken = asyncHandler( async (req, res, next) => {
     if(accessToken) {
         try {
             const decodedAccessToken = jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET, { ignoreExpiration: true });
-
             const dateNow = Date.now()/1000;
+            
             if(decodedAccessToken.exp < dateNow) {
                 res.status(401);
                 throw new Error("Access token is expired");
             }
 
-            res.setHeader("x-access-token", accessToken);
             req.user = decodedAccessToken.user;
             next();
         } catch(e) {

@@ -5,9 +5,6 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { uuid } from "uuidv4"
 
-// @desc Register a user
-// @route POST /api/users/register
-// @access public
 const registerUser = asyncHandler(async (req, res) => {
     const { firstName, lastName, email, password } = req.body;
     if(!firstName || !email || !password) {
@@ -41,9 +38,6 @@ const registerUser = asyncHandler(async (req, res) => {
     }
 })
 
-// @desc Login user
-// @route POST /api/users/login
-// @access public
 const loginUser = asyncHandler(async (req, res) => {
     const { email, password } = req.body;
     if(!email || !password) {
@@ -53,23 +47,23 @@ const loginUser = asyncHandler(async (req, res) => {
     const user = await User.findOne({ email });
     if(user && (await bcrypt.compare(password, user.password))) {
         const sessionId = uuid();
-
+        
         const accessToken = jwt.sign({
-                sessionId: sessionId,
-                user: {
-                    email: user.email,
-                    id: user._id
-                }
-            }, 
-            process.env.ACCESS_TOKEN_SECRET,
-            { expiresIn: process.env.ACCESS_TOKEN_EXPIRATION_TIME }
-        );
-        const refreshTokenObj = {
             sessionId: sessionId,
-            valid: true
-        }
-
-        const refreshToken = jwt.sign(refreshTokenObj, process.env.REFRESH_TOKEN_SECRET, { expiresIn: REFRESH_TOKEN_EXPIRATION_TIME });
+            user: {
+                email: user.email,
+                id: user._id
+            }
+        }, 
+        process.env.ACCESS_TOKEN_SECRET,
+        { expiresIn: process.env.ACCESS_TOKEN_EXPIRATION_TIME }
+    );
+    const refreshTokenObj = {
+        sessionId: sessionId,
+        valid: true
+    }
+    
+    const refreshToken = jwt.sign(refreshTokenObj, process.env.REFRESH_TOKEN_SECRET, { expiresIn: process.env.REFRESH_TOKEN_EXPIRATION_TIME });
 
         await RefreshToken.create(refreshTokenObj);
         
@@ -115,10 +109,8 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
     }
 })
 
-// @desc Current user info
-// @route POST /api/users/current
-// @access private
 const currentUser = asyncHandler(async (req, res) => {
+    res.status(200);
     res.json(req.user)
 })
 
