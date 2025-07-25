@@ -55,15 +55,14 @@ const loginUser = asyncHandler(async (req, res) => {
                 id: user._id
             }
         }, 
-        process.env.ACCESS_TOKEN_SECRET,
-        { expiresIn: process.env.ACCESS_TOKEN_EXPIRATION_TIME }
-    );
-    const refreshTokenObj = {
-        sessionId: sessionId,
-        valid: true
-    }
-    
-    const refreshToken = jwt.sign(refreshTokenObj, process.env.REFRESH_TOKEN_SECRET, { expiresIn: process.env.REFRESH_TOKEN_EXPIRATION_TIME });
+        process.env.ACCESS_TOKEN_SECRET, { expiresIn: process.env.ACCESS_TOKEN_EXPIRATION_TIME });
+        
+        const refreshTokenObj = {
+            sessionId: sessionId,
+            valid: true
+        }
+        
+        const refreshToken = jwt.sign(refreshTokenObj, process.env.REFRESH_TOKEN_SECRET, { expiresIn: process.env.REFRESH_TOKEN_EXPIRATION_TIME });
 
         await RefreshToken.create(refreshTokenObj);
         
@@ -78,17 +77,19 @@ const loginUser = asyncHandler(async (req, res) => {
 })
 
 const refreshAccessToken = asyncHandler(async (req, res) => {
-    const refreshToken = req.headers["x-access-token"];
+    const refreshToken = req.body["refreshToken"];
+    const accessToken = req.body["accessToken"];
     if(!refreshToken) {
         res.status(401);
         throw new Error("Refresh token is missing");
     }
 
     try {
-        const decoded = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, { ignoreExpiration: true });
-        const session = await RefreshToken.findOne({ sessionId: decoded.sessionId });
+        const decodedAccessToken = jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET, { ignoreExpiration: true });
+        const decodedRefreshToken = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, { ignoreExpiration: true });
+        const session = await RefreshToken.findOne({ sessionId: decodedRefreshToken.sessionId });
 
-        if(!session || !session.valid || decoded.exp < Date.now()/1000) {
+        if(!session || !session.valid || decodedRefreshToken.exp < Date.now()/1000) {
             if(session && session.valid) {
                 session.valid = false;
                 await session.save();
@@ -97,15 +98,22 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
             res.status(401);
             throw new Error("Refresh token is expired or invalid");
         }
-        const newAccessToken = jwt.sign({
-            user: decoded.user,
-            sessionId: decoded.sessionId,
-        }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: ACCESS_TOKEN_EXPIRATION_TIME });
 
-        res.json({ accessToken: newAccessToken });
+        
+        if(decodedAccessToken.sessionId !== decodedRefreshToken.sessionId) {
+            res.status(401);
+            throw new Error("Access token and refresh token don't match");
+        }
+        const newAccessToken = jwt.sign({
+            user: decodedAccessToken.user,
+            sessionId: decodedAccessToken.sessionId,
+        }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: process.env.ACCESS_TOKEN_EXPIRATION_TIME });
+        
+        res.status(200);
+        res.json({ accessToken: newAccessToken, refreshToken });
     } catch(e) {
         res.status(401);
-        throw new Error("Refresh token verificaiton failed");
+        throw e;
     }
 })
 
