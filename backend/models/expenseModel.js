@@ -24,6 +24,6 @@ const expenseSchema = mongoose.Schema({
         required: false,
         ref: "Group"
     }
-})
+}, { timestamps: true })
 
 export default mongoose.model("Expense", expenseSchema);

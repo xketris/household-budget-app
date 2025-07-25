@@ -14,6 +14,8 @@ const addGroup = asyncHandler(async (req, res) => {
         throw new Error("Group with this name created by the same user already exists");
     }
 
+    console.log(req.user)
+    
     const group = await Group.create({
         name,
         description,
@@ -36,7 +38,7 @@ const addGroup = asyncHandler(async (req, res) => {
 })
 
 const getGroup = asyncHandler(async (req, res) => {
-    const group = await Group.findById(req.params.id);
+    const group = await Group.findById(req.params.groupId);
     if(!group) {
         res.status(400);
         throw new Error("Group doesn't exist");
@@ -55,7 +57,7 @@ const getGroups = asyncHandler(async (req, res) => {
 })
 
 const deleteGroup = asyncHandler(async (req, res) => {
-    const group = await Group.findById(req.params.id);
+    const group = await Group.findById(req.params.groupId);
     if(!group) {
         res.status(400);
         throw new Error("Group doesn't exist");
@@ -65,12 +67,12 @@ const deleteGroup = asyncHandler(async (req, res) => {
         res.status(400);
         throw new Error("User is not a part of the requested group");
     }
-    await Group.deleteOne({_id: req.params.id});
+    await Group.deleteOne({_id: req.params.groupId});
     res.status(200).json(group);
 })
 
 const updateGroup = asyncHandler(async (req, res) => {
-    const group = await Group.findById(req.params.id);
+    const group = await Group.findById(req.params.groupId);
     if(!group) {
         res.status(400);
         throw new Error("Group doesn't exist");
@@ -79,7 +81,7 @@ const updateGroup = asyncHandler(async (req, res) => {
         res.status(400);
         throw new Error("User is not a part of the requested group");
     }
-    const newGroupData = await Group.findByIdAndUpdate( req.params.id, req.body,{ new: true })
+    const newGroupData = await Group.findByIdAndUpdate( req.params.groupId, req.body,{ new: true })
     res.status(200).json(newGroupData);
 })
 

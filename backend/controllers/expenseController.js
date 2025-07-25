@@ -4,10 +4,14 @@ import Group from "../models/groupModel.js"
 
 const addExpense = asyncHandler(async (req, res) => {
     const { amount, description, category, groupId } = req.body;
-    if(!amount || !category) {
+
+    console.log(req.body)
+    if(!amount) {
         res.status(400);
         throw new Error("Amount is required");
     }
+
+    console.log("AAA")
 
     const expense = await Expense.create({
         amount, 
@@ -33,15 +37,21 @@ const addExpense = asyncHandler(async (req, res) => {
 });
 
 const getExpenses = asyncHandler(async (req, res) => {
+    res.status(200).json(await Expense.find({ createdBy: req.user.id, groupId: null }));
+});
+
+const getGroupExpenses = asyncHandler(async (req, res) => {
     const groupId = req.params.groupId;
-    if(groupId) {
+    if(groupId && (await Group.findById(groupId)).users.includes(req.user.id)) {
         res.status(200).json(await Expense.find({ groupId }));
+    } else {
+        res.status(400);
+        throw new Error("Group is invalid or user doesn't belong to it");
     }
-    res.status(200).json(await Expense.find({ createdBy: req.user.id }));
 });
 
 const getExpense = asyncHandler(async (req, res) => {
-    const expense = await Expense.findById(req.params.id);
+    const expense = await Expense.findById(req.params.expenseId);
 
     if(expense.user_id.toString() !== req.user.id) {
         res.status(403);
@@ -52,7 +62,7 @@ const getExpense = asyncHandler(async (req, res) => {
 });
 
 const updateExpense = asyncHandler(async (req, res) => {
-    const expense = await Expense.findById(req.params.id);
+    const expense = await Expense.findById(req.params.expenseId);
     if(!expense) {
         res.status(404);
         throw new Error("Contact not found");
@@ -63,7 +73,7 @@ const updateExpense = asyncHandler(async (req, res) => {
     }
     
     const updatedExpense = await Expense.findByIdAndUpdate(
-        req.params.id,
+        req.params.expenseId,
         req.body,
         { new: true }
     )
@@ -72,7 +82,7 @@ const updateExpense = asyncHandler(async (req, res) => {
 });
 
 const deleteExpense = asyncHandler(async (req, res) => {
-    const expense = await Expense.findById(req.params.id);
+    const expense = await Expense.findById(req.params.expenseId);
     if(!expense) {
         res.status(404);
         throw new Error("Expense not found");
@@ -83,8 +93,8 @@ const deleteExpense = asyncHandler(async (req, res) => {
         throw new Error("User doesn't have permission to delete others expenses");
     }
 
-    await Expense.deleteOne({_id: req.params.id});
+    await Expense.deleteOne({_id: req.params.expenseId});
     res.status(200).json(expense);
 });
 
-export { addExpense, getExpenses, getExpense, deleteExpense, updateExpense };
+export { addExpense, getExpenses, getExpense, deleteExpense, updateExpense, getGroupExpenses };

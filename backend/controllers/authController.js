@@ -52,7 +52,7 @@ const loginUser = asyncHandler(async (req, res) => {
             sessionId: sessionId,
             user: {
                 email: user.email,
-                _id: user._id
+                id: user._id
             }
         }, 
         process.env.ACCESS_TOKEN_SECRET, { expiresIn: process.env.ACCESS_TOKEN_EXPIRATION_TIME });
