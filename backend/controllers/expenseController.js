@@ -12,7 +12,7 @@ const addExpense = asyncHandler(async (req, res) => {
     const expense = await Expense.create({
         amount, 
         description, 
-        createdBy: req.user._id, 
+        createdBy: req.user.id, 
         category, 
         groupId
     });
@@ -33,11 +33,11 @@ const addExpense = asyncHandler(async (req, res) => {
 });
 
 const getExpenses = asyncHandler(async (req, res) => {
-    if(req.body.groupId && await Group.findById(groupId).users.contains(req.user._id)) {
+    const groupId = req.params.groupId;
+    if(groupId) {
         res.status(200).json(await Expense.find({ groupId }));
     }
-    const expenses = await Expense.find({ createdBy: req.user.id });
-    res.status(200).json(expenses);
+    res.status(200).json(await Expense.find({ createdBy: req.user.id }));
 });
 
 const getExpense = asyncHandler(async (req, res) => {
@@ -57,7 +57,11 @@ const updateExpense = asyncHandler(async (req, res) => {
         res.status(404);
         throw new Error("Contact not found");
     }
-
+    if(expense.createdBy.toString() !== req.user.id) {
+        res.status(404);
+        throw new Error("Contact not found");
+    }
+    
     const updatedExpense = await Expense.findByIdAndUpdate(
         req.params.id,
         req.body,

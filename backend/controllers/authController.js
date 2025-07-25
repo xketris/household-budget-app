@@ -29,7 +29,7 @@ const registerUser = asyncHandler(async (req, res) => {
 
     if(user) {
         res.status(201).json({
-            _id: user._id,
+            id: user._id,
             email: user.email
         })
     } else {
@@ -52,7 +52,7 @@ const loginUser = asyncHandler(async (req, res) => {
             sessionId: sessionId,
             user: {
                 email: user.email,
-                id: user._id
+                _id: user._id
             }
         }, 
         process.env.ACCESS_TOKEN_SECRET, { expiresIn: process.env.ACCESS_TOKEN_EXPIRATION_TIME });

@@ -50,7 +50,7 @@ const getGroup = asyncHandler(async (req, res) => {
 })
 
 const getGroups = asyncHandler(async (req, res) => {
-    const groups = await Group.find({ users: [req.user.id] });
+    const groups = await Group.find({ users: { "$in": [req.user.id] } });
     res.status(200).json(groups);
 })
 
