@@ -8,6 +8,8 @@ import groupRoutes from "./routes/groupRoutes.js";
 import expenseRoutes from "./routes/expenseRoutes.js";
 import userRoutes from "./routes/authRoutes.js";
 import errorHandler from "./middleware/errorHandler.js";
+import validateToken from "./middleware/validateTokenHandler.js";
+import rateLimiter from "./middleware/rateLimiter.js";
 
 dotenv.config();
 
@@ -18,8 +20,8 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(helmet());
 
-app.use("/api/groups", groupRoutes);
-app.use("/api/expenses", expenseRoutes);
+app.use("/api/groups", validateToken, rateLimiter, groupRoutes);
+app.use("/api/expenses", validateToken, rateLimiter, expenseRoutes);
 app.use("/api/auth", userRoutes);
 
 app.use(errorHandler)

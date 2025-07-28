@@ -1,10 +1,7 @@
 import Router from "express";
 import { addExpense, deleteExpense, getExpense, getExpenses, updateExpense } from "../controllers/expenseController.js";
-import validateToken from "../middleware/validateTokenHandler.js";
 
 const router = Router();
-
-router.use(validateToken);
 
 router.route("/")
     .get(getExpenses)
