@@ -23,6 +23,10 @@ const expenseSchema = mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         required: false,
         ref: "Group"
+    },
+    date: {
+        type: Date,
+        required: true,
     }
 }, { timestamps: true })
 
