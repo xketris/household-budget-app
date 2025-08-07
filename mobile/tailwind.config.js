@@ -7,7 +7,7 @@ module.exports = {
       colors: {
         background: "#121212",
         foreground: "#e0e0e0",
-        primary: "#000000",
+        primary: "#ffd600",
         secondary: "#ab9249",
         border: "#333333",
         input: "#1a1a1a"
@@ -16,4 +16,3 @@ module.exports = {
   },
   plugins: [],
 }
-
