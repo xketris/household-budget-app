@@ -5,28 +5,33 @@ import "../global.css";
 
 const TabIcon = ({ focused, icon, title }: any) => {
   return (
-    <View className="flex flex-col w-full flex-1 min-w-[126px] min-h-14 justify-center items-center size-full justify-center items-center mt-8 rounded-full">
+    <ImageBackground className="flex flex-col w-full flex-1 min-w-[126px] min-h-16 justify-center items-center rounded-full overflow-hidden">
       <Image className="size-7" tintColor={focused ? "#ffd600" : "#ab9249"} source={icon}></Image>
       <Text className={`${focused ? "text-primary" : "text-secondary"} text-base font-semibold`}>{title}</Text>
-    </View>
+    </ImageBackground>
   )
 }
 
 export default function TabsLayout() {
   return (
     <Tabs screenOptions={{ 
-      tabBarShowLabel: false, 
+      tabBarShowLabel: false,
       tabBarItemStyle: {
         width: "100%",
         height: "100%",
+        flexDirection: 'row',
         justifyContent: "center",
         alignItems: "center"
       },
       tabBarStyle: {
         backgroundColor: "#121212",
-        height: 82,
-        position: "absolute",
-        overflow: "hidden",
+        position: 'absolute',
+        bottom: 0,
+        width: '100%',
+        height: 70,
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+        alignItems: 'center',
       }
     }}>
       <Tabs.Screen name="index" options={{
