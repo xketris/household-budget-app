@@ -1,4 +1,4 @@
-import CustomMonthPicker from "@/components/CustomMonthPicker";
+import CustomDatePicker from "@/components/CustomDatePicker";
 import { icons } from "@/constants/icons";
 import { Image, Text, TouchableOpacity, View } from "react-native";
 
@@ -21,7 +21,7 @@ export default function HomePage() {
 
       </View>
       <View className="py-4">
-        <CustomMonthPicker />
+        <CustomDatePicker />
         <Text>A</Text>
       </View>
     </View>
