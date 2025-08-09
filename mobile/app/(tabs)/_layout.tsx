@@ -1,14 +1,14 @@
 import { icons } from "@/constants/icons";
 import { Tabs } from "expo-router";
-import { Image, ImageBackground, Text, View } from "react-native";
+import { Image, Text, View } from "react-native";
 import "../global.css";
 
 const TabIcon = ({ focused, icon, title }: any) => {
   return (
-    <ImageBackground className="flex flex-col w-full flex-1 min-w-[126px] min-h-16 justify-center items-center rounded-full overflow-hidden">
+    <View className="flex flex-col w-full flex-1 min-w-[126px] min-h-16 justify-center items-center rounded-full overflow-hidden">
       <Image className="size-7" tintColor={focused ? "#ffd600" : "#ab9249"} source={icon}></Image>
       <Text className={`${focused ? "text-primary" : "text-secondary"} text-base font-semibold`}>{title}</Text>
-    </ImageBackground>
+    </View>
   )
 }
 
@@ -32,6 +32,8 @@ export default function TabsLayout() {
         flexDirection: 'row',
         justifyContent: 'space-around',
         alignItems: 'center',
+        borderTopWidth: 2,
+        borderColor: "#2a2a2a",
       }
     }}>
       <Tabs.Screen name="index" options={{
