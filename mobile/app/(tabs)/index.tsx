@@ -1,9 +1,19 @@
 import CustomDatePicker from "@/components/CustomDatePicker";
 import { icons } from "@/constants/icons";
-import { Image, Text, TouchableOpacity, View } from "react-native";
+import { add, set } from "@/state/expense/expensesSlice";
+import { RootState } from "@/state/store";
+import { Button, Image, Text, TouchableOpacity, View } from "react-native";
+import { useDispatch, useSelector } from "react-redux";
 
 
 export default function HomePage() {
+  const expenses = useSelector((state: RootState) => state.expenses.expenses);
+  const dispatch = useDispatch();
+
+  const addExpense = () => dispatch(add({ id: new Date().getTime()}))
+
+  const mappedExpenses = () => expenses.map((value, index: number) => <Text key={value.id} className="text-foreground text-3xl">{value.id}</Text>)
+
   return (
     <View
       className="bg-background h-full items-center"
@@ -22,7 +32,9 @@ export default function HomePage() {
       </View>
       <View className="py-4">
         <CustomDatePicker />
-        <Text>A</Text>
+        <Button onPress={() => addExpense()} title="Add Expense" />
+        {expenses.length ? mappedExpenses() : <Text>No expenses to display</Text>}
+        <Text className="text-white"> Len: {expenses.length}</Text>
       </View>
     </View>
   );
