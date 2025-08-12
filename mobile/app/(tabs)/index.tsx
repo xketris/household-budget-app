@@ -1,6 +1,6 @@
 import CustomDatePicker from "@/components/CustomDatePicker";
 import { icons } from "@/constants/icons";
-import { add, set } from "@/state/expense/expensesSlice";
+import { add, set } from "@/state/expenses/expensesSlice";
 import { RootState } from "@/state/store";
 import { Button, Image, Text, TouchableOpacity, View } from "react-native";
 import { useDispatch, useSelector } from "react-redux";

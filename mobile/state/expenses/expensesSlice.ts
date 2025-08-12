@@ -22,7 +22,7 @@ interface ExpensesState {
 const initialState: ExpensesState = { expenses: [] };
 
 const expensesSlice = createSlice({
-    name: "expense",
+    name: "expenses",
     initialState,
     reducers: {
         set: (state, action) => {
