@@ -6,7 +6,7 @@ const login = async (credentials: {login: string, password: string}) => {
     return res;
 }
 
-const refresh = async (refreshToken: string) => {
+const refresh = async (refreshToken: string)=> {
     const res = await api.post("/auth/refresh", { refreshToken });
     return res;
 }
@@ -28,7 +28,8 @@ export const removeTokens = async () => {
 export const refreshAccessToken = async () => {
     const refreshToken = await getRefreshToken();
     if(!refreshToken) throw new Error("No refresh token");
-    const { accessToken: newAccessToken } = {accessToken: ""}; // To be implemented
+    const { data } = await refresh(refreshToken);
+    const newAccessToken = data.accessToken;
 
     await setItem("accessToken", newAccessToken);
     return newAccessToken;
