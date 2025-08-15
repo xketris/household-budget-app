@@ -1,17 +1,17 @@
+import { removeTokens } from "@/service/auth";
 import { createSlice } from "@reduxjs/toolkit";
 
 interface UserState {
-  id: string | undefined;
-  email: string | undefined;
-  firstName: string | undefined;
-  lastName: string | undefined;
+  user: {
+    id: string;
+    email: string;
+    firstName: string;
+    lastName: string;
+  } | null
 }
 
-const initialState: UserState = {
-  id: undefined,
-  email: undefined,
-  firstName: undefined,
-  lastName: undefined,
+const initialState: UserState | null = {
+  user: null
 };
 
 const userSlice = createSlice({
@@ -21,9 +21,13 @@ const userSlice = createSlice({
     set: (state, action) => {
       state = action.payload;
     },
+    logout: (state) => {
+      state.user = null;
+      removeTokens();
+    }
   },
 });
 
-export const { set } = userSlice.actions;
+export const { set, logout } = userSlice.actions;
 
 export default userSlice.reducer;
