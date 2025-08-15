@@ -1,14 +1,19 @@
 import api from "./api";
 import { getItem, removeItem, setItem } from "./storage";
 
-const login = async (credentials: {login: string, password: string}) => {
-    const res = await api.post("/auth/login", credentials);
+const refresh = async (refreshToken: string)=> {
+    const res = await api.post("http://192.168.1.10:5001/api/auth/refresh", { refreshToken });
     return res;
 }
 
-const refresh = async (refreshToken: string)=> {
-    const res = await api.post("/auth/refresh", { refreshToken });
-    return res;
+export const login = async (credentials: {email: string, password: string}) => {
+    try {
+        const res = await api.post("http://192.168.1.10:5001/api/auth/login", credentials);
+        return res;
+    } catch (err: any) {
+        console.error('Login error:', err.message);
+        throw err;
+    }
 }
 
 export const getAccessToken = async () => await getItem("accessToken");
