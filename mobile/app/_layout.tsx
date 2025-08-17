@@ -4,11 +4,11 @@ import "./global.css"
 import SafeScreenArea from "@/components/SafeScreenArea";
 import { Provider, useDispatch, useSelector } from "react-redux"
 import { RootState, store } from "@/state/store"
-
 export default function RootLayout() {
+
   return (
     <>
-      <Provider  store={store}>
+      <Provider store={store}>
         <StatusBar hidden={true} />
         <SafeScreenArea>
           <Stack>

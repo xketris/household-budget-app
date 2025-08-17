@@ -5,7 +5,7 @@ import validateToken from "../middleware/validateTokenHandler.js";
 const router = Router();
 
 router.post("/register", registerUser);
-router.get("/login", loginUser);
+router.post("/login", loginUser);
 router.post("/refresh", refreshAccessToken);
 router.get("/current", validateToken, currentUser);
 

@@ -6,6 +6,13 @@ const refresh = async (refreshToken: string)=> {
     return res;
 }
 
+export const current = async ()=> {
+    const res = await api.get("http://192.168.1.10:5001/api/auth/current");
+    res.data.accessToken = await getAccessToken();
+
+    return res;
+}
+
 export const login = async (credentials: {email: string, password: string}) => {
     try {
         const res = await api.post("http://192.168.1.10:5001/api/auth/login", credentials);

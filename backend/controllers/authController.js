@@ -124,8 +124,17 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
 })
 
 const currentUser = asyncHandler(async (req, res) => {
+    const user = await User.findById(req.user.id);
+    console.log(user)
     res.status(200);
-    res.json(req.user)
+    res.json({
+        user: {
+            id: user._id.toString(),
+            email: user.email,
+            firstName: user.firstName,
+            lastName: user.lastName,
+        }
+    })
 })
 
 
