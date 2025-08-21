@@ -3,6 +3,7 @@ import { getAccessToken, logoutUser, refreshAccessToken } from "./auth";
 import { store } from "@/state/store";
 
 const api = axios.create({
+    baseURL: "http://192.168.1.10:5001/api",
     headers: { 
         "Content-Type": "application/json",
     }

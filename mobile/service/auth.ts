@@ -3,7 +3,7 @@ import api from "./api";
 import { getItem, removeItem, setItem } from "./storage";
 
 const refresh = async (refreshToken: string)=> {
-    const res = await api.post("http://192.168.1.10:5001/api/auth/refresh", { refreshToken });
+    const res = await api.post("/auth/refresh", { refreshToken });
     return res;
 }
 
@@ -11,7 +11,7 @@ export const loadUser = createAsyncThunk(
     "user/load", 
     async (_, { rejectWithValue }) => {
         try {
-            const res = await api.get("http://192.168.1.10:5001/api/auth/current");
+            const res = await api.get("/auth/current");
             const token  = await getAccessToken();
 
             return {
@@ -30,7 +30,7 @@ export const loginUser = createAsyncThunk(
     'user/login', 
     async (credentials: {email: string, password: string}, { rejectWithValue }) => {
         try {
-            const res = await api.post("http://192.168.1.10:5001/api/auth/login", credentials);
+            const res = await api.post("/auth/login", credentials);
             const { accessToken, refreshToken, user } = res.data;
 
             setTokens(accessToken, refreshToken);
