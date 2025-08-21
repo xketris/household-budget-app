@@ -1,3 +1,4 @@
+import { createAsyncThunk } from "@reduxjs/toolkit";
 import api from "./api";
 import { getItem, removeItem, setItem } from "./storage";
 
@@ -6,22 +7,55 @@ const refresh = async (refreshToken: string)=> {
     return res;
 }
 
-export const current = async ()=> {
-    const res = await api.get("http://192.168.1.10:5001/api/auth/current");
-    res.data.accessToken = await getAccessToken();
+export const loadUser = createAsyncThunk(
+    "user/load", 
+    async (_, { rejectWithValue }) => {
+        try {
+            const res = await api.get("http://192.168.1.10:5001/api/auth/current");
+            const token  = await getAccessToken();
 
-    return res;
-}
-
-export const login = async (credentials: {email: string, password: string}) => {
-    try {
-        const res = await api.post("http://192.168.1.10:5001/api/auth/login", credentials);
-        return res;
-    } catch (err: any) {
-        console.error('Login error:', err.message);
-        throw err;
+            return {
+                user: res.data.user,
+                accessToken: token
+            }
+        } catch (err: any) {
+            return rejectWithValue(
+                err.response?.data?.message || "Failed to load user"
+            );
+        }
     }
-}
+)
+
+export const loginUser = createAsyncThunk(
+    'user/login', 
+    async (credentials: {email: string, password: string}, { rejectWithValue }) => {
+        try {
+            const res = await api.post("http://192.168.1.10:5001/api/auth/login", credentials);
+            const { accessToken, refreshToken, user } = res.data;
+
+            setTokens(accessToken, refreshToken);
+            const firstTime = await getItem("isFirstTime");
+            await setItem("isFirstTime", false);
+
+            return { user, accessToken, newUser: !!firstTime };
+        } catch (err: any) {
+            return rejectWithValue(err.response?.data || err.message);
+        }
+    }
+)
+
+export const logoutUser = createAsyncThunk(
+    'user/logout', 
+    async (_, { rejectWithValue }) => {
+        try {
+            await removeTokens();
+        } catch (err: any) {
+            return rejectWithValue(
+                err.response?.data?.message || "Failed to remove tokens"
+            );
+        }
+    }
+)
 
 export const getAccessToken = async () => await getItem("accessToken");
 

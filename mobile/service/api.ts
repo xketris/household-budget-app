@@ -1,7 +1,6 @@
 import axios from "axios"
-import { getAccessToken, refreshAccessToken } from "./auth";
+import { getAccessToken, logoutUser, refreshAccessToken } from "./auth";
 import { store } from "@/state/store";
-import { logout } from "@/state/user/userSlice";
 
 const api = axios.create({
     headers: { 
@@ -30,7 +29,7 @@ api.interceptors.response.use(
                 originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
                 return api(originalRequest);
             } catch (err) {
-                store.dispatch(logout());
+                store.dispatch(logoutUser());
                 return Promise.reject(err);
             }
         }

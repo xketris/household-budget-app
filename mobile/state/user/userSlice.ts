@@ -1,5 +1,7 @@
-import { removeTokens, setTokens } from "@/service/auth";
+import { loadUser, loginUser, logoutUser, removeTokens, setTokens } from "@/service/auth";
+import { getItem, setItem } from "@/service/storage";
 import { createSlice } from "@reduxjs/toolkit";
+
 
 interface UserState {
   newUser: boolean,
@@ -9,47 +11,69 @@ interface UserState {
     email: string;
     firstName: string;
     lastName: string;
-  } | null
+  } | null,
+  status: 'idle' | 'loading' | 'succeeded' | 'failed';
 }
 
 const initialState: UserState | null = {
   user: null,
   accessToken: null,
-  newUser: false
+  newUser: false,
+  status: "idle"
 };
 
 const userSlice = createSlice({
   name: "user",
   initialState,
   reducers: {
-    login: (state, action) => {
-      const accessToken = action.payload.accessToken;
-      const refreshToken = action.payload.refreshToken;
-      setTokens(accessToken, refreshToken);
-
-      console.log(action.payload)
-      state.user = action.payload.user;
-      state.accessToken = action.payload.accessToken;
-      state.newUser = false;
-      
-      
-    },
-    load: (state, action) => {
-      console.log("\n\nBBBBBB\n", state)
-      state.user = action.payload.user;
-      state.accessToken = action.payload.accessToken;
-
-
-      console.log("\n\nCCCC\n", state)
-    },
-    logout: (state) => {
-      state.user = null;
-      state.accessToken = null;
-      removeTokens();
-    },
   },
+  extraReducers: (builder) => {
+    builder
+      .addCase(loginUser.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(loginUser.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        state.user = action.payload.user;
+        state.accessToken = action.payload.accessToken;
+        state.newUser = action.payload.newUser;
+      })
+      .addCase(loginUser.rejected, (state) => {
+        state.status = 'failed';
+        state.user = null;
+        state.accessToken = null;
+      });
+
+    builder
+      .addCase(loadUser.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(loadUser.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        state.user = action.payload.user;
+        state.accessToken = action.payload.accessToken;
+      })
+      .addCase(loadUser.pending, (state) => {
+        state.status = "failed";
+        state.user = null;
+      });
+
+    builder
+      .addCase(logoutUser.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(logoutUser.fulfilled, (state) => {
+        state.status = "idle";
+        state.user = null;
+        state.accessToken = null;
+      })
+      .addCase(logoutUser.pending, (state) => {
+        state.status = "failed";
+        state.user = null;
+      });
+  }
 });
 
-export const { login, logout, load } = userSlice.actions;
+// export const { logout } = userSlice.actions;
 
 export default userSlice.reducer;

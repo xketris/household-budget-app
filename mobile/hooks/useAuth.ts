@@ -1,28 +1,23 @@
 import { useSelector, useDispatch } from 'react-redux';
 import type { RootState, AppDispatch } from '../state/store';
-import { login, logout } from '../state/user/userSlice';
-import { login as signInUser } from "../service/auth" 
+import { loginUser, logoutUser } from "../service/auth" 
 
 const useAuth = () => {
   const dispatch = useDispatch<AppDispatch>();
 
-  // Select auth state from Redux
   const { user, accessToken, newUser } = useSelector((state: RootState) => state.user);
 
-  // Wrap logout in a function
   const signOut = () => {
-    dispatch(logout());
+    dispatch(logoutUser());
   };
 
   const signIn = async (credentials: {email: string, password: string}) => {
-    console.log("\n\nAAAA!!!", credentials)
     try {
-        const res = await signInUser(credentials);
-        console.log("\n\ZZZZ!!!", res.data)
-        dispatch(login(res.data));
-        return res;
+      const result = await dispatch(loginUser(credentials)).unwrap();
+      return result;
     } catch (error) {
-        console.log(error);
+      console.log("Login failed:", error);
+      throw error;
     }
   };
 
