@@ -16,19 +16,6 @@ const LoginPage = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { user, newUser, signIn, load, accessToken } = useAuth();
 
-  useEffect(() => {
-    (async () => {
-      console.log("AAA\n");
-      try {
-        const res = await load();
-        // router.replace("/");
-        console.log("DATA", res);
-      } catch (err) {
-        console.log(err);
-      }
-    })();
-  }, []);
-
   const handleLogin = async () => {
     setError(false);
     try {
