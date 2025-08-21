@@ -6,13 +6,13 @@ import { Link, Redirect, useRouter } from 'expo-router'
 import useAuth from '@/hooks/useAuth'
 
 const HomePage = () => {
-  const { isAuthenticated, newUser } = useAuth();
+  // const { isAuthenticated, newUser } = useAuth();
 
-  if(isAuthenticated) {
-    return <Redirect href={"/"} />
-  } else if (!newUser) {
-    return <Redirect href={"/auth/login"} />
-  }
+  // // if(isAuthenticated) {
+  // //   return <Redirect href={"/"} />
+  // // } else if (!newUser) {
+  // //   return <Redirect href={"/auth/login"} />
+  // // }
 
   return (
     <View className='bg-background flex-1 h-full w-full flex-col justify-center items-center px-16'>

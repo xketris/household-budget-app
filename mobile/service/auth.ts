@@ -1,8 +1,10 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import api from "./api";
 import { getItem, removeItem, setItem } from "./storage";
+import { store } from "@/state/store";
+import { setAccessToken } from "@/state/user/userSlice";
 
-const refresh = async (refreshToken: string)=> {
+const refresh = async (refreshToken: string) => {
     const res = await api.post("/auth/refresh", { refreshToken });
     return res;
 }
@@ -13,7 +15,6 @@ export const loadUser = createAsyncThunk(
         try {
             const res = await api.get("/auth/current");
             const token  = await getAccessToken();
-
             return {
                 user: res.data.user,
                 accessToken: token
@@ -49,6 +50,7 @@ export const logoutUser = createAsyncThunk(
     async (_, { rejectWithValue }) => {
         try {
             await removeTokens();
+            return true; 
         } catch (err: any) {
             return rejectWithValue(
                 err.response?.data?.message || "Failed to remove tokens"
@@ -74,9 +76,11 @@ export const removeTokens = async () => {
 export const refreshAccessToken = async () => {
     const refreshToken = await getRefreshToken();
     if(!refreshToken) throw new Error("No refresh token");
+
     const { data } = await refresh(refreshToken);
     const newAccessToken = data.accessToken;
 
     await setItem("accessToken", newAccessToken);
+    store.dispatch(setAccessToken(newAccessToken))
     return newAccessToken;
 }

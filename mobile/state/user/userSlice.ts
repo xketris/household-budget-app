@@ -1,5 +1,4 @@
-import { loadUser, loginUser, logoutUser, removeTokens, setTokens } from "@/service/auth";
-import { getItem, setItem } from "@/service/storage";
+import { loadUser, loginUser, logoutUser } from "@/service/auth";
 import { createSlice } from "@reduxjs/toolkit";
 
 
@@ -26,6 +25,9 @@ const userSlice = createSlice({
   name: "user",
   initialState,
   reducers: {
+    setAccessToken: (state, action) => {
+      state.accessToken = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -53,7 +55,7 @@ const userSlice = createSlice({
         state.user = action.payload.user;
         state.accessToken = action.payload.accessToken;
       })
-      .addCase(loadUser.pending, (state) => {
+      .addCase(loadUser.rejected, (state) => {
         state.status = "failed";
         state.user = null;
       });
@@ -62,18 +64,18 @@ const userSlice = createSlice({
       .addCase(logoutUser.pending, (state) => {
         state.status = "loading";
       })
-      .addCase(logoutUser.fulfilled, (state) => {
+      .addCase(logoutUser.fulfilled, (state, action) => {
         state.status = "idle";
         state.user = null;
         state.accessToken = null;
       })
-      .addCase(logoutUser.pending, (state) => {
+      .addCase(logoutUser.rejected, (state) => {
         state.status = "failed";
         state.user = null;
       });
   }
 });
 
-// export const { logout } = userSlice.actions;
+export const { setAccessToken } = userSlice.actions;
 
 export default userSlice.reducer;
