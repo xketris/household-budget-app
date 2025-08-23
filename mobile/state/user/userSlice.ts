@@ -1,10 +1,8 @@
-import { loadUser, loginUser, logoutUser } from "@/service/auth";
 import { createSlice } from "@reduxjs/toolkit";
-
+import { loadUser, loginUser, logoutUser } from "./userThunks";
 
 interface UserState {
   newUser: boolean,
-  accessToken: string | null,
   user: {
     id: string;
     email: string;
@@ -16,7 +14,6 @@ interface UserState {
 
 const initialState: UserState | null = {
   user: null,
-  accessToken: null,
   newUser: false,
   status: "idle"
 };
@@ -25,9 +22,6 @@ const userSlice = createSlice({
   name: "user",
   initialState,
   reducers: {
-    setAccessToken: (state, action) => {
-      state.accessToken = action.payload;
-    },
   },
   extraReducers: (builder) => {
     builder
@@ -37,13 +31,11 @@ const userSlice = createSlice({
       .addCase(loginUser.fulfilled, (state, action) => {
         state.status = "succeeded";
         state.user = action.payload.user;
-        state.accessToken = action.payload.accessToken;
         state.newUser = action.payload.newUser;
       })
       .addCase(loginUser.rejected, (state) => {
         state.status = 'failed';
         state.user = null;
-        state.accessToken = null;
       });
 
     builder
@@ -53,7 +45,6 @@ const userSlice = createSlice({
       .addCase(loadUser.fulfilled, (state, action) => {
         state.status = "succeeded";
         state.user = action.payload.user;
-        state.accessToken = action.payload.accessToken;
       })
       .addCase(loadUser.rejected, (state) => {
         state.status = "failed";
@@ -67,7 +58,6 @@ const userSlice = createSlice({
       .addCase(logoutUser.fulfilled, (state, action) => {
         state.status = "idle";
         state.user = null;
-        state.accessToken = null;
       })
       .addCase(logoutUser.rejected, (state) => {
         state.status = "failed";
@@ -76,6 +66,6 @@ const userSlice = createSlice({
   }
 });
 
-export const { setAccessToken } = userSlice.actions;
+// export const { } = userSlice.actions;
 
 export default userSlice.reducer;

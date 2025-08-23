@@ -1,14 +1,17 @@
 import CustomDatePicker from "@/components/CustomDatePicker";
 import { icons } from "@/constants/icons";
 import useAuth from "@/hooks/useAuth";
-import { logoutUser } from "@/service/auth";
-import { add, set } from "@/state/expenses/expensesSlice";
+import { add } from "@/state/expenses/expensesSlice";
 import { RootState } from "@/state/store";
+import { useRouter } from "expo-router";
 import { Button, Image, Text, TouchableOpacity, View } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 
 
 export default function HomePage() {
+  const { signOut } = useAuth();
+  const router = useRouter();
+  
   const expenses = useSelector((state: RootState) => state.expenses.expenses);
 
   const dispatch = useDispatch();
@@ -16,6 +19,15 @@ export default function HomePage() {
   const addExpense = () => dispatch(add({ id: new Date().getTime()}))
 
   const mappedExpenses = () => expenses.map((value, index: number) => <Text key={value.id} className="text-foreground text-3xl">{value.id}</Text>)
+
+  const handleLogout = async () => {
+    try {
+      await signOut();
+      router.replace("/auth/login");
+    } catch (err: any) {
+      console.log("ERR");
+    }
+  };
 
   return (
     <View
@@ -28,7 +40,7 @@ export default function HomePage() {
           <Image className="size-3" source={icons.arrow} tintColor="#e0e0e0" resizeMode={'contain'} />
         </TouchableOpacity>
 
-        <TouchableOpacity>
+        <TouchableOpacity onPress={handleLogout}>
           <Image source={icons.settings} tintColor="#ab9249" className="size-8" resizeMode={'contain'} />
         </TouchableOpacity>
 

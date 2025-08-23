@@ -1,17 +1,18 @@
 import { useSelector, useDispatch } from 'react-redux';
 import type { RootState, AppDispatch } from '../state/store';
-import { loadUser, loginUser, logoutUser } from "../service/auth" 
+import { loadUser, loginUser, logoutUser } from "../state/user/userThunks" 
 import { useState } from 'react';
 
 const useAuth = () => {
   const dispatch = useDispatch<AppDispatch>();
 
-  const { user, accessToken, newUser } = useSelector((state: RootState) => state.user);
+  const { user, newUser } = useSelector((state: RootState) => state.user);
 
   const [isLoading, setIsLoading] = useState(false);
 
   const signOut = async () => {
     await dispatch(logoutUser());
+    console.log("Logged out")
   };
 
   const load = async () => {
@@ -39,13 +40,12 @@ const useAuth = () => {
 
   return {
     user,
-    isAuthenticated: !!user && !!accessToken,
+    isAuthenticated: !!user,
     signOut,
     signIn,
     load,
     isLoading,
     newUser,
-    accessToken
   };
 }
 

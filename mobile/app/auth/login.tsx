@@ -1,29 +1,28 @@
-import { View, Text, Image, TouchableOpacity, TextInput } from "react-native";
-import React, { useEffect, useState } from "react";
-import { Link, useRouter } from "expo-router";
+import { View, Text, TouchableOpacity } from "react-native";
+import React, { useState } from "react";
+import { useRouter } from "expo-router";
 import CustomInput from "@/components/CustomInput";
-import { loadUser } from "@/service/auth";
-import { useDispatch, useSelector } from "react-redux";
-import { AppDispatch, RootState } from "@/state/store";
 import useAuth from "@/hooks/useAuth";
 
 const LoginPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState(false);
+  const [error, setError] = useState("");
   const router = useRouter();
 
-  const dispatch = useDispatch<AppDispatch>();
-  const { user, newUser, signIn, load, accessToken } = useAuth();
+  const { signIn } = useAuth();
 
   const handleLogin = async () => {
-    setError(false);
+    setError("");
     try {
       const res = await signIn({ email, password });
+      if(res.user) {
+        router.replace("/");
+      }
       console.log(res);
-    } catch (err) {
+    } catch (err: any) {
       console.log("ERR");
-      setError(true);
+      setError(err?.message);
     }
   };
 
@@ -70,9 +69,6 @@ const LoginPage = () => {
         <Text className="text-primary text-center text-2xl font-bold">
           Sign Up
         </Text>
-      </TouchableOpacity>
-      <TouchableOpacity className="flex-row gap-2">
-        <Text className="text-white text-center text-2xl">{accessToken}</Text>
       </TouchableOpacity>
     </View>
   );

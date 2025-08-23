@@ -1,6 +1,5 @@
 import axios, { AxiosRequestConfig } from "axios"
-import { getAccessToken, logoutUser, refreshAccessToken } from "./auth";
-import { store } from "@/state/store";
+import { getAccessToken, getRefreshToken, setItem } from "./storage";
 
 interface CustomAxiosRequestConfig extends AxiosRequestConfig {
   _retry?: boolean;
@@ -43,13 +42,28 @@ api.interceptors.response.use(
 
                 return api(originalRequest);
             } catch (err) {
-                store.dispatch(logoutUser());
                 return Promise.reject(err);
             }
         }
         return Promise.reject(error)
     }
 )
+
+const refresh = async (refreshToken: string) => {
+    const res = await api.post("/auth/refresh", { refreshToken });
+    return res;
+}
+
+export const refreshAccessToken = async () => {
+    const refreshToken = await getRefreshToken();
+    if(!refreshToken) throw new Error("No refresh token");
+
+    const { data } = await refresh(refreshToken);
+    const newAccessToken = data.accessToken;
+
+    await setItem("accessToken", newAccessToken);
+    return newAccessToken;
+}
 
 
 export default api;

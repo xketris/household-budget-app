@@ -12,13 +12,14 @@ const HomePage = () => {
   useEffect(() => {
     (async () => {
       try {
+        console.log(isAuthenticated, isLoading, newUser)
         if(isAuthenticated) {
           router.replace("/");
           return;
         }
 
         const res = await load();
-        if(res.accessToken) {
+        if(res.user) {
           router.replace("/");
           return;
         }
@@ -28,6 +29,7 @@ const HomePage = () => {
           return;
         }
       } catch (err) {
+        router.replace("/auth/login");
         console.log(err);
       }
     })();
@@ -50,6 +52,7 @@ const HomePage = () => {
       </View>
     )
   }
+
   return (
     <View className='bg-background flex-1 h-full w-full flex-col justify-center items-center px-16'>
       <ActivityIndicator size="large" color="#ffd600" />
