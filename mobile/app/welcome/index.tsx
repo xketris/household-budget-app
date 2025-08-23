@@ -1,8 +1,7 @@
 import { View, Text, Image, TouchableOpacity, ActivityIndicator } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 import { icons } from '@/constants/icons'
-import { Button } from '@react-navigation/elements'
-import { Link, Redirect, useRouter } from 'expo-router'
+import { Link, useRouter } from 'expo-router'
 import useAuth from '@/hooks/useAuth'
 
 const HomePage = () => {

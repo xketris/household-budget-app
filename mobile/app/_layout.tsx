@@ -2,8 +2,8 @@ import { Stack } from "expo-router";
 import { StatusBar } from "react-native";
 import "./global.css"
 import SafeScreenArea from "@/components/SafeScreenArea";
-import { Provider, useDispatch, useSelector } from "react-redux"
-import { RootState, store } from "@/state/store"
+import { Provider, } from "react-redux"
+import { store } from "@/state/store"
 export default function RootLayout() {
 
   return (
