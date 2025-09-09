@@ -5,6 +5,7 @@ import { add } from "@/state/expenses/expensesSlice";
 import { RootState } from "@/state/store";
 import { useRouter } from "expo-router";
 import { Button, Image, Text, TouchableOpacity, View } from "react-native";
+import CustomChart from "@/components/CustomChart"
 import { useDispatch, useSelector } from "react-redux";
 
 export default function HomePage() {
@@ -55,7 +56,8 @@ export default function HomePage() {
           />
         </TouchableOpacity>
       </View>
-      <View className="py-4">
+
+      <View className="py-8">
         <CustomDatePicker />
         <Button onPress={() => addExpense()} title="Add Expense" />
         {expenses.length ? (
@@ -65,6 +67,8 @@ export default function HomePage() {
         )}
         <Text className="text-white"> Len: {expenses.length}</Text>
       </View>
+      
+      <CustomChart />
     </View>
   );
 }
