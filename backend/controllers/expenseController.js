@@ -3,7 +3,7 @@ import Expense from "../models/expenseModel.js"
 import Group from "../models/groupModel.js"
 
 const addExpense = asyncHandler(async (req, res) => {
-    const { amount, description, category, groupId } = req.body;
+    const { amount, description, category, groupId, date } = req.body;
 
     console.log(req.body)
     if(!amount) {
@@ -11,16 +11,17 @@ const addExpense = asyncHandler(async (req, res) => {
         throw new Error("Amount is required");
     }
 
-    console.log("AAA")
-
+    
     const expense = await Expense.create({
         amount, 
         description, 
         createdBy: req.user.id, 
         category, 
-        groupId
+        groupId,
+        date: new Date(date)
     });
-
+    
+    console.log("AAA")
     if(expense) {
         res.status(201).json({
             _id: expense._id,
@@ -28,6 +29,7 @@ const addExpense = asyncHandler(async (req, res) => {
             description: expense.description, 
             createdBy: expense.createdBy,
             category: expense.category,
+            date: expense.date,
             groupId: expense.groupId
         });
     } else {
@@ -37,7 +39,20 @@ const addExpense = asyncHandler(async (req, res) => {
 });
 
 const getExpenses = asyncHandler(async (req, res) => {
-    res.status(200).json(await Expense.find({ createdBy: req.user.id, groupId: null }));
+    const dateFilter = {};
+    const { from, to } = req.query;
+    if(from) {
+        const fromDate = new Date(from);
+        fromDate.setUTCHours(0, 0, 0, 0)
+        dateFilter.$gte = new Date(from);
+    }
+    if(to) {
+        const toDate = new Date(to);
+        toDate.setUTCHours(23, 59, 59, 999)
+        dateFilter.$lte = new Date(to);
+        
+    }
+    res.status(200).json(await Expense.find({ createdBy: req.user.id, groupId: null, ...(Object.keys(dateFilter).length && { date: dateFilter }) }));
 });
 
 const getGroupExpenses = asyncHandler(async (req, res) => {
