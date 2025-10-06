@@ -123,8 +123,28 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
     }
 })
 
+const updateUser = asyncHandler(async (req, res) => {
+    const newData = req.body;
+    if(newData.email) {
+        const emailAvailable = await User.findOne({ email: newData.email });
+        if(emailAvailable) {
+            res.status(400);
+            throw new Error("Email is already taken");
+        }
+    }
+
+    const updatedUser = await User.findByIdAndUpdate(
+        req.user.id,
+        req.body,
+        { new: true }
+    )
+
+    res.status(200).json(updatedUser);
+});
+
+
 const currentUser = asyncHandler(async (req, res) => {
-    const user = await User.findById(req.user.id);
+    const user = await User.findById(req.user.id).populate("groups");
     console.log(user)
     res.status(200);
     res.json({
@@ -133,9 +153,10 @@ const currentUser = asyncHandler(async (req, res) => {
             email: user.email,
             firstName: user.firstName,
             lastName: user.lastName,
+            groups: user.groups
         }
     })
 })
 
 
-export { registerUser, loginUser, currentUser, refreshAccessToken }
+export { registerUser, loginUser, currentUser, refreshAccessToken, updateUser }
