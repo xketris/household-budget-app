@@ -42,7 +42,7 @@ const CustomChart = () => {
 
   const renderDot = (color: string) => {
     return (
-      <View className="size-3 rounded-md mr-3" style={{ backgroundColor: color}}
+      <View className="size-3 rounded-xl mr-3" style={{ backgroundColor: color}}
       />
     );
   };
@@ -69,17 +69,12 @@ const CustomChart = () => {
 
   return (
     <View
-        style={{
-          margin: 20,
-          padding: 16,
-          borderRadius: 20,
-          backgroundColor: "#141b43ff",
-        }}
+        className="m-5 p-4 rounded-3xl bg-input"
       >
-        <Text style={{ color: "white", fontSize: 16, fontWeight: "bold" }}>
+        <Text className="text-white text-lg font-bold">
           Statistics
         </Text>
-        <View style={{ padding: 20, alignItems: "center" }}>
+        <View className="p-6 items-center">
           <PieChart
             data={data}
             donut
@@ -87,7 +82,7 @@ const CustomChart = () => {
             sectionAutoFocus
             radius={90}
             innerRadius={60}
-            innerCircleColor={"#232B5D"}
+            innerCircleColor={"#1a1a1a"}
             onPress = { (item:any, index:any) => {
                 const newData = data.map(dataItem => ({...dataItem, focused: dataItem===item}));
                 setSelected(newData[index]); 
@@ -96,14 +91,14 @@ const CustomChart = () => {
             centerLabelComponent={() => {
               return (
                 <View
-                  style={{ justifyContent: "center", alignItems: "center" }}
+                  className="justify-center items-center"
                 >
                   <Text
-                    style={{ fontSize: 22, color: "white", fontWeight: "bold" }}
+                    className="text-2xl text-white font-bold"
                   >
                     {selected.value}%
                   </Text>
-                  <Text style={{ fontSize: 14, color: "white" }}>
+                  <Text className="text-white text-base">
                     {selected.name}
                   </Text>
                 </View>
