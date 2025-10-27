@@ -45,6 +45,7 @@ const loginUser = asyncHandler(async (req, res) => {
         throw new Error("All fields are mandatory");
     }
     const user = await User.findOne({ email });
+    console.log(user)
     if(user && (await bcrypt.compare(password, user.password))) {
         const sessionId = uuid();
         

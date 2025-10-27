@@ -32,11 +32,6 @@ const LoginPage = () => {
         Welcome Back
       </Text>
       <View className="flex-col w-full justify-around gap-5 pb-5">
-        {error && (
-          <Text className="text-foreground text-2xl font-bold">
-            An Error Occurred
-          </Text>
-        )}
         <CustomInput
           placeholder="Email"
           className="rounded-3xl"
@@ -53,11 +48,17 @@ const LoginPage = () => {
         <TouchableOpacity
           className="bg-primary w-full py-5 rounded-3xl"
           onPress={handleLogin}
+          activeOpacity={1 }
         >
           <Text className="text-background font-bold text-center text-2xl">
             Login
           </Text>
         </TouchableOpacity>
+        {error && (
+          <Text className="text-[#e55] text-center text-sm font-bold">
+            An Error Occurred: {error}
+          </Text>
+        )}
       </View>
       <TouchableOpacity
         className="flex-row gap-2"
