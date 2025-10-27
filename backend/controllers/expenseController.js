@@ -77,21 +77,15 @@ const getExpense = asyncHandler(async (req, res) => {
 });
 
 const updateExpense = asyncHandler(async (req, res) => {
-    const expense = await Expense.findById(req.params.expenseId);
+    const updatedExpense = await Expense.findByIdAndUpdate({
+        _id: req.params.expenseId,
+        createdBy: req.user.id
+    }, req.body, { new: true });
+
     if(!expense) {
         res.status(404);
-        throw new Error("Contact not found");
+        throw new Error("Expense not found or you are not authorized to modify it");
     }
-    if(expense.createdBy.toString() !== req.user.id) {
-        res.status(404);
-        throw new Error("Contact not found");
-    }
-    
-    const updatedExpense = await Expense.findByIdAndUpdate(
-        req.params.expenseId,
-        req.body,
-        { new: true }
-    )
 
     res.status(200).json(updatedExpense);
 });

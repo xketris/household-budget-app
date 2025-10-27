@@ -57,17 +57,17 @@ const getGroups = asyncHandler(async (req, res) => {
 })
 
 const deleteGroup = asyncHandler(async (req, res) => {
-    const group = await Group.findById(req.params.groupId);
+    const group = await Group.findByIdAndDelete({
+        _id: req.params.groupId,
+        createdBy: req.user.id
+    });
+
+
     if(!group) {
-        res.status(400);
-        throw new Error("Group doesn't exist");
+        res.status(404);
+        throw new Error("Group not found or you are not authorized to delete it");
     }
-    
-    if(group.createdBy.toString() !== req.user.id){
-        res.status(400);
-        throw new Error("User is not a part of the requested group");
-    }
-    await Group.deleteOne({_id: req.params.groupId});
+
     res.status(200).json(group);
 })
 
