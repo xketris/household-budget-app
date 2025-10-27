@@ -6,9 +6,9 @@ const addExpense = asyncHandler(async (req, res) => {
     const { amount, description, category, groupId, date } = req.body;
 
     console.log(req.body)
-    if(!amount) {
+    if(!amount || !date) {
         res.status(400);
-        throw new Error("Amount is required");
+        throw new Error("Amount and date is required");
     }
 
     
@@ -44,12 +44,12 @@ const getExpenses = asyncHandler(async (req, res) => {
     if(from) {
         const fromDate = new Date(from);
         fromDate.setUTCHours(0, 0, 0, 0)
-        dateFilter.$gte = new Date(from);
+        dateFilter.$gte = fromDate;
     }
     if(to) {
         const toDate = new Date(to);
         toDate.setUTCHours(23, 59, 59, 999)
-        dateFilter.$lte = new Date(to);
+        dateFilter.$lte = toDate;
         
     }
     res.status(200).json(await Expense.find({ createdBy: req.user.id, groupId: null, ...(Object.keys(dateFilter).length && { date: dateFilter }) }));
